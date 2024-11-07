@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Смета</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <h1>Смета на закупку стройматериалов</h1>
+    <form action="/estimate" method="post">
+        <label for="material_id">Выберите материал:</label>
+        <select id="material_id" name="material_id" required>
+            {% for material in materials %}
+            <option value="{{ material.id }}">{{ material.name }} — {{ material.unit_price }} руб/{{ material.unit }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="quantity">Количество:</label>
+        <input type="number" id="quantity" name="quantity" required>
+
+        <button type="submit">Добавить в смету</button>
+    </form>
+
+    <h2>Позиции в смете</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Материал</th>
+                <th>Цена за единицу (руб)</th>
+                <th>Количество</th>
+                <th>Стоимость (руб)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in estimate_items %}
+            <tr>
+                <td>{{ item.material.name }}</td>
+                <td>{{ item.material.unit_price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.total_cost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Общая стоимость: {{ total_estimate }} руб</h2>
+    <a href="/">Добавить ещё материалы</a>
+    <a href="/clear">Очистить смету</a>
+</body>
+
+</html>

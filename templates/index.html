@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Смета на закупку стройматериалов</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <h1>Добавить новый материал</h1>
+    <form action="/add_material" method="post">
+        <label for="name">Название материала:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="unit_price">Цена за единицу (руб):</label>
+        <input type="number" id="unit_price" name="unit_price" step="0.01" required>
+
+        <label for="unit">Единица измерения:</label>
+        <input type="text" id="unit" name="unit" required>
+
+        <button type="submit">Добавить материал</button>
+    </form>
+
+    <h2>Список доступных материалов</h2>
+    <ul>
+        {% for material in materials %}
+        <li>{{ material.name }} — {{ material.unit_price }} руб/{{ material.unit }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/estimate">Перейти к смете</a>
+</body>
+
+</html>
