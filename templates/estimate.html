@@ -3,51 +3,82 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Смета</title>
+    <title>Смета на закупку стройматериалов</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
-    <h1>Смета на закупку стройматериалов</h1>
-    <form action="/estimate" method="post">
-        <label for="material_id">Выберите материал:</label>
-        <select id="material_id" name="material_id" required>
-            {% for material in materials %}
-            <option value="{{ material.id }}">{{ material.name }} — {{ material.unit_price }} руб/{{ material.unit }}</option>
+    <div class="container">
+        <h1>Смета на закупку стройматериалов</h1>
+
+        <!-- Форма добавления материалов -->
+        <div class="add-material">
+            <h2>Добавить материал</h2>
+            <form action="/estimate" method="post">
+                <label for="material_id">Выберите материал:</label>
+                <select id="material_id" name="material_id" required>
+                    {% for material in materials %}
+                    <option value="{{ material.id }}">{{ material.name }} — {{ material.unit_price }} руб/{{ material.unit }}</option>
+                    {% endfor %}
+                </select>
+                <label for="quantity">Количество:</label>
+                <input type="number" id="quantity" name="quantity" min="1" required>
+                <button type="submit" class="btn add-btn">Добавить</button>
+            </form>
+        </div>
+
+        <!-- Отображение позиций в смете -->
+        <div class="estimate-list">
+            <h2>Список материалов в смете</h2>
+            {% if estimate_items %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Материал</th>
+                        <th>Цена за единицу (руб)</th>
+                        <th>Количество</th>
+                        <th>Стоимость (руб)</th>
+                        <th>Удалить</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in estimate_items %}
+                    <tr>
+                        <td>{{ item.material.name }}</td>
+                        <td>{{ item.material.unit_price }}</td>
+                        <td>{{ item.quantity }} {{ item.material.unit }}</td>
+                        <td>{{ item.total_cost }}</td>
+                        <td>
+                            <a href="/delete_item/{{ item.id }}" class="delete-btn">🗑️</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Общая стоимость: {{ total_estimate }} руб</h3>
+            {% else %}
+            <p>Смета пока пуста. Добавьте материалы выше.</p>
+            {% endif %}
+        </div>
+
+        <!-- Более выгодные предложения -->
+        <div class="cheaper-options">
+            <h2>Выгодные предложения</h2>
+            {% for material_name, sites in cheaper_prices.items() %}
+            <div class="material">
+                <h4>{{ material_name }}</h4>
+                <ul>
+                    {% for site in sites %}
+                    <li><a href="https://{{ site.site }}" target="_blank">{{ site.site }}</a> — {{ site.price }} руб</li>
+                    {% endfor %}
+                </ul>
+            </div>
             {% endfor %}
-        </select>
+        </div>
 
-        <label for="quantity">Количество:</label>
-        <input type="number" id="quantity" name="quantity" required>
-
-        <button type="submit">Добавить в смету</button>
-    </form>
-
-    <h2>Позиции в смете</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Материал</th>
-                <th>Цена за единицу (руб)</th>
-                <th>Количество</th>
-                <th>Стоимость (руб)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in estimate_items %}
-            <tr>
-                <td>{{ item.material.name }}</td>
-                <td>{{ item.material.unit_price }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.total_cost }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h2>Общая стоимость: {{ total_estimate }} руб</h2>
-    <a href="/">Добавить ещё материалы</a>
-    <a href="/clear">Очистить смету</a>
+        <!-- Кнопка очистки сметы -->
+        <a href="/clear" class="btn clear-btn">Очистить смету</a>
+    </div>
 </body>
 
 </html>
