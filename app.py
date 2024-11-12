@@ -76,5 +76,20 @@ def clear():
     db.session.commit()
     return redirect(url_for('estimate'))
 
+# app.py
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+# Маршрут для страницы чертежа
+@app.route('/drawing')
+def drawing():
+    return render_template('drawing.html')
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
